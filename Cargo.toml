@@ -1,5 +1,5 @@
 [package]
-name = "ftp_worker"
+name = "http_worker"
 version = "0.1.0"
 authors = ["Marc-Antoine Arnaud <marc.antoine@nomalab.com>"]
 
