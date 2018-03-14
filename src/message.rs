@@ -61,10 +61,21 @@ pub fn process(message: &str) -> Result<u64, &str> {
 }
 
 #[test]
-fn name() {
+fn message_test() {
 
-  let message = "{\"parameters\":{\"source\":{\"path\":\"https://staticftv-a.akamaihd.net/sous-titres/france4/20180214/172524974-5a843dcd126f8-1518616910.ttml\"},\"destination\":{\"path\":\"/tmp/ftp_ftv/97d4354b-9a2b-4ef9-ba43-b6c422bd989e/172524974-5a843dcd126f8-1518616910.ttml\"}},\"job_id\":690}";
+  let message = "{ \
+      \"parameters\":{ \
+        \"source\":{ \
+          \"path\":\"https://staticftv-a.akamaihd.net/sous-titres/france4/20180214/172524974-5a843dcd126f8-1518616910.ttml\" \
+        }, \
+        \"destination\":{ \
+          \"path\":\"/tmp/ftp_ftv/97d4354b-9a2b-4ef9-ba43-b6c422bd989e/172524974-5a843dcd126f8-1518616910.ttml\" \
+        } \
+      }, \
+      \"job_id\":690 \
+    } \
+    ";
 
   let result = process(message);
-  assert!(result == Ok(()));
+  assert!(result.is_ok());
 }
