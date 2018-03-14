@@ -78,13 +78,17 @@ fn main() {
             println!("got message: {}", data);
 
             match message::process(data) {
-              Ok(job_id) => {
-                let msg = json!({
-                  "job_id": job_id,
-                  "status": "completed"
-                });
-                emitter::publish(&amqp_completed_queue, msg.to_string());
-                ch.basic_ack(message.delivery_tag);
+              Ok((is_ack, job_id)) => {
+                if is_ack {
+                  let msg = json!({
+                    "job_id": job_id,
+                    "status": "completed"
+                  });
+                  emitter::publish(&amqp_completed_queue, msg.to_string());
+                  ch.basic_ack(message.delivery_tag);
+                } else {
+                  ch.basic_reject(message.delivery_tag, true);
+                }
               }
               Err(msg) => {
                 let content = json!({
