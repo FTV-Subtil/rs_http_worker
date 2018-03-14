@@ -112,7 +112,7 @@ fn ack_message_test() {
     ";
 
   let result = process(message);
-  assert!(result == Ok((true, 690)));
+  assert!(result.is_ok());
 }
 
 #[test]
@@ -135,5 +135,5 @@ fn nack_message_test() {
     ";
 
   let result = process(message);
-  assert!(result == Ok((false, 690)));
+  assert!(result.is_err());
 }
