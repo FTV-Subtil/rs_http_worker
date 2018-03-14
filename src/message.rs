@@ -75,7 +75,7 @@ pub fn process(message: &str) -> Result<u64, MessageError> {
 
       if !(status == StatusCode::Ok) {
         println!("ERROR {:?}", response);
-        return Err(MessageError::RuntimeError(String::from("bad response status")));
+        return Err(MessageError::RuntimeError("bad response status".to_string()));
       }
 
       let mut body: Vec<u8> = vec![];
@@ -88,7 +88,7 @@ pub fn process(message: &str) -> Result<u64, MessageError> {
     },
     Err(msg) => {
       println!("ERROR {:?}", msg);
-      return Err(MessageError::RuntimeError(String::from("bad input message")));
+      return Err(MessageError::RuntimeError("bad input message".to_string()));
     }
   }
 }
