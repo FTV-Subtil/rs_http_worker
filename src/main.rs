@@ -78,26 +78,30 @@ fn main() {
             println!("got message: {}", data);
 
             match message::process(data) {
-              Ok((is_ack, job_id)) => {
-                if is_ack {
-                  let msg = json!({
-                    "job_id": job_id,
-                    "status": "completed"
-                  });
-                  emitter::publish(&amqp_completed_queue, msg.to_string());
-                  ch.basic_ack(message.delivery_tag);
-                } else {
-                  ch.basic_reject(message.delivery_tag, true);
-                }
-              }
-              Err(msg) => {
-                let content = json!({
-                  "status": "error",
-                  "message": msg
+              Ok(job_id) => {
+                let msg = json!({
+                  "job_id": job_id,
+                  "status": "completed"
                 });
-                emitter::publish(&amqp_error_queue, content.to_string());
-                let requeue = false;
-                ch.basic_reject(message.delivery_tag, requeue);
+                emitter::publish(&amqp_completed_queue, msg.to_string());
+                ch.basic_ack(message.delivery_tag);
+              }
+              Err(error) => {
+                match error {
+                  message::MessageError::RequirementError(msg) => {
+                    println!("{}", msg);
+                    ch.basic_reject(message.delivery_tag, true);
+                  },
+                  message::MessageError::RuntimeError(msg) => {
+                    let content = json!({
+                      "status": "error",
+                      "message": msg
+                    });
+                    emitter::publish(&amqp_error_queue, content.to_string());
+                    let requeue = false;
+                    ch.basic_reject(message.delivery_tag, requeue);
+                  }
+                }
               }
             }
             Ok(())

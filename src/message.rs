@@ -29,21 +29,25 @@ struct Job {
   parameters: Parameters
 }
 
-fn check_requirements(requirements :Requirement) -> bool {
-  let mut meet_requirements = true;
+pub enum MessageError {
+  RuntimeError(String),
+  RequirementError(String)
+}
+
+fn check_requirements(requirements: Requirement) -> Result<(), MessageError> {
   if requirements.paths.is_some() {
     let required_paths :Vec<String> = requirements.paths.unwrap();
     for path in &required_paths {
-      if !Path::new(path).exists() {
-        println!("Warning: Required file does not exists: {}", path);
-        meet_requirements = false;
+      let p = Path::new(path);
+      if !p.exists() {
+        return Err(MessageError::RequirementError(format!("Warning: Required file does not exists: {:?}", p)));
       }
     }
   }
-  return meet_requirements;
+  Ok(())
 }
 
-pub fn process(message: &str) -> Result<(bool, u64), &str> {
+pub fn process(message: &str) -> Result<u64, MessageError> {
 
   let parsed: Result<Job, _> = serde_json::from_str(message);
 
@@ -53,8 +57,9 @@ pub fn process(message: &str) -> Result<(bool, u64), &str> {
 
       let parameters = content.parameters;
 
-      if !check_requirements(parameters.requirement) {
-        return Ok((false, content.job_id))
+      match check_requirements(parameters.requirement) {
+        Ok(_) => {},
+        Err(message) => { return Err(message); }
       }
 
       let url = parameters.source.path;
@@ -70,7 +75,7 @@ pub fn process(message: &str) -> Result<(bool, u64), &str> {
 
       if !(status == StatusCode::Ok) {
         println!("ERROR {:?}", response);
-        return Err("bad response status");
+        return Err(MessageError::RuntimeError(String::from("bad response status")));
       }
 
       let mut body: Vec<u8> = vec![];
@@ -79,11 +84,11 @@ pub fn process(message: &str) -> Result<(bool, u64), &str> {
       let mut file = File::create(filename.as_str()).unwrap();
       file.write_all(&body).unwrap();
 
-      Ok((true, content.job_id))
+      Ok(content.job_id)
     },
     Err(msg) => {
       println!("ERROR {:?}", msg);
-      return Err("bad input message");
+      return Err(MessageError::RuntimeError(String::from("bad input message")));
     }
   }
 }
