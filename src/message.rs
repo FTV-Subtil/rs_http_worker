@@ -105,7 +105,6 @@ fn ack_message_test() {
       \"job_id\":690 \
     } \
     ";
-          // \"paths\": [\"/tmp/ftp_ftv/97d4354b-9a2b-4ef9-ba43-b6c422bd989e/172524974-5a843dcd126f8-standard1.mp4\"] \
 
   let result = process(message);
   assert!(result == Ok((true, 690)));
