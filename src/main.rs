@@ -86,14 +86,22 @@ fn main() {
                 emitter::publish(&amqp_completed_queue, msg.to_string());
                 ch.basic_ack(message.delivery_tag);
               }
-              Err(msg) => {
-                let content = json!({
-                  "status": "error",
-                  "message": msg
-                });
-                emitter::publish(&amqp_error_queue, content.to_string());
-                let requeue = false;
-                ch.basic_reject(message.delivery_tag, requeue);
+              Err(error) => {
+                match error {
+                  message::MessageError::RequirementsError(msg) => {
+                    println!("{}", msg);
+                    ch.basic_reject(message.delivery_tag, true);
+                  },
+                  message::MessageError::RuntimeError(msg) => {
+                    let content = json!({
+                      "status": "error",
+                      "message": msg
+                    });
+                    emitter::publish(&amqp_error_queue, content.to_string());
+                    let requeue = false;
+                    ch.basic_reject(message.delivery_tag, requeue);
+                  }
+                }
               }
             }
             Ok(())

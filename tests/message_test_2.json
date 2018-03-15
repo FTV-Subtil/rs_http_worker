@@ -1,0 +1,16 @@
+{
+  "parameters": {
+    "requirements": {
+      "paths": [
+        "/tmp/FiLe_ThAt_$h0uld_N0t_3xist$"
+      ]
+    },
+    "source": {
+      "path":"https://staticftv-a.akamaihd.net/sous-titres/france4/20180214/172524974-5a843dcd126f8-1518616910.ttml"
+    },
+    "destination": {
+      "path":"/tmp/172524974-5a843dcd126f8-1518616910.ttml"
+    }
+  },
+  "job_id":690
+}
