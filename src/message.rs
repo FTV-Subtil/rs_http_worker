@@ -95,45 +95,20 @@ pub fn process(message: &str) -> Result<u64, MessageError> {
 
 #[test]
 fn ack_message_test() {
+  let mut file = File::open("tests/message_test_1.json").expect("file not found");
+  let mut msg = String::new();
+  file.read_to_string(&mut msg).expect("something went wrong reading the file");
 
-  let message = "{ \
-      \"parameters\":{ \
-        \"requirement\":{ \
-        }, \
-        \"source\":{ \
-          \"path\":\"https://staticftv-a.akamaihd.net/sous-titres/france4/20180214/172524974-5a843dcd126f8-1518616910.ttml\" \
-        }, \
-        \"destination\":{ \
-          \"path\":\"/tmp/ftp_ftv/97d4354b-9a2b-4ef9-ba43-b6c422bd989e/172524974-5a843dcd126f8-1518616910.ttml\" \
-        } \
-      }, \
-      \"job_id\":690 \
-    } \
-    ";
-
-  let result = process(message);
+  let result = process(msg.as_str());
   assert!(result.is_ok());
 }
 
 #[test]
 fn nack_message_test() {
+  let mut file = File::open("tests/message_test_2.json").expect("file not found");
+  let mut msg = String::new();
+  file.read_to_string(&mut msg).expect("something went wrong reading the file");
 
-  let message = "{ \
-      \"parameters\":{ \
-        \"requirement\":{ \
-          \"paths\": [\"/tmp/FiLe_ThAt_$h0uld_N0t_3xist$\"] \
-        }, \
-        \"source\":{ \
-          \"path\":\"https://staticftv-a.akamaihd.net/sous-titres/france4/20180214/172524974-5a843dcd126f8-1518616910.ttml\" \
-        }, \
-        \"destination\":{ \
-          \"path\":\"/tmp/ftp_ftv/97d4354b-9a2b-4ef9-ba43-b6c422bd989e/172524974-5a843dcd126f8-1518616910.ttml\" \
-        } \
-      }, \
-      \"job_id\":690 \
-    } \
-    ";
-
-  let result = process(message);
+  let result = process(msg.as_str());
   assert!(result.is_err());
 }
