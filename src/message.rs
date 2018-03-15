@@ -12,13 +12,13 @@ struct Resource {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Requirement {
+struct Requirements {
   paths: Option<Vec<String>>
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Parameters {
-  requirement: Requirement,
+  requirements: Requirements,
   source: Resource,
   destination: Resource
 }
@@ -31,16 +31,16 @@ struct Job {
 
 pub enum MessageError {
   RuntimeError(String),
-  RequirementError(String)
+  RequirementsError(String)
 }
 
-fn check_requirements(requirements: Requirement) -> Result<(), MessageError> {
+fn check_requirements(requirements: Requirements) -> Result<(), MessageError> {
   if requirements.paths.is_some() {
     let required_paths :Vec<String> = requirements.paths.unwrap();
     for path in &required_paths {
       let p = Path::new(path);
       if !p.exists() {
-        return Err(MessageError::RequirementError(format!("Warning: Required file does not exists: {:?}", p)));
+        return Err(MessageError::RequirementsError(format!("Warning: Required file does not exists: {:?}", p)));
       }
     }
   }
@@ -57,7 +57,7 @@ pub fn process(message: &str) -> Result<u64, MessageError> {
 
       let parameters = content.parameters;
 
-      match check_requirements(parameters.requirement) {
+      match check_requirements(parameters.requirements) {
         Ok(_) => {},
         Err(message) => { return Err(message); }
       }

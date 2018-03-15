@@ -88,7 +88,7 @@ fn main() {
               }
               Err(error) => {
                 match error {
-                  message::MessageError::RequirementError(msg) => {
+                  message::MessageError::RequirementsError(msg) => {
                     println!("{}", msg);
                     ch.basic_reject(message.delivery_tag, true);
                   },
