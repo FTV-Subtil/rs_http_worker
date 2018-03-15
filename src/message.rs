@@ -110,5 +110,5 @@ fn nack_message_test() {
   file.read_to_string(&mut msg).unwrap();
 
   let result = process(msg.as_str());
-  assert!(result.is_err());
+  assert!(match result { Err(MessageError::RequirementsError(_)) => true, _ => false });
 }
