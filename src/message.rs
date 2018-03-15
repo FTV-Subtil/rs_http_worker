@@ -95,9 +95,9 @@ pub fn process(message: &str) -> Result<u64, MessageError> {
 
 #[test]
 fn ack_message_test() {
-  let mut file = File::open("tests/message_test_1.json").expect("file not found");
+  let mut file = File::open("tests/message_test_1.json").unwrap();
   let mut msg = String::new();
-  file.read_to_string(&mut msg).expect("something went wrong reading the file");
+  file.read_to_string(&mut msg).unwrap();
 
   let result = process(msg.as_str());
   assert!(result.is_ok());
@@ -105,9 +105,9 @@ fn ack_message_test() {
 
 #[test]
 fn nack_message_test() {
-  let mut file = File::open("tests/message_test_2.json").expect("file not found");
+  let mut file = File::open("tests/message_test_2.json").unwrap();
   let mut msg = String::new();
-  file.read_to_string(&mut msg).expect("something went wrong reading the file");
+  file.read_to_string(&mut msg).unwrap();
 
   let result = process(msg.as_str());
   assert!(result.is_err());
