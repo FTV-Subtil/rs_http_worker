@@ -11,13 +11,14 @@ struct Resource {
   path: String
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Default, Debug, Serialize, Deserialize)]
 struct Requirements {
   paths: Option<Vec<String>>
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Parameters {
+  #[serde(default)]
   requirements: Requirements,
   source: Resource,
   destination: Resource
