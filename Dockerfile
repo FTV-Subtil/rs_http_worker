@@ -10,6 +10,6 @@ RUN apt update && \
 FROM debian:stretch
 COPY --from=builder /usr/local/cargo/bin/http_worker /usr/bin
 
-RUN apt update && apt install -y libssl1.1
+RUN apt update && apt install -y libssl1.1 openssl
 
 CMD http_worker
