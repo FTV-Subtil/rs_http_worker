@@ -1,4 +1,5 @@
 
+use amqp_worker::*;
 use reqwest;
 use reqwest::StatusCode;
 use serde_json;
@@ -28,11 +29,6 @@ struct Parameters {
 struct Job {
   job_id: u64,
   parameters: Parameters
-}
-
-pub enum MessageError {
-  RuntimeError(String),
-  RequirementsError(String)
 }
 
 fn check_requirements(requirements: Requirements) -> Result<(), MessageError> {
