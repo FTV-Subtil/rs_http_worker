@@ -4,7 +4,6 @@ version = "0.1.0"
 authors = ["Marc-Antoine Arnaud <marc.antoine@nomalab.com>"]
 
 [dependencies]
-#rs_amqp_worker = { path="../../ebu/rs_amqp_worker" }
 amqp_worker = "0.1.3"
 
 reqwest = "0.8.1"

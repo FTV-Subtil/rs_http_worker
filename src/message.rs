@@ -8,59 +8,91 @@ use std::path::Path;
 use std::io::prelude::*;
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Resource {
-  path: String
-}
-
-#[derive(Default, Debug, Serialize, Deserialize)]
-struct Requirements {
-  paths: Option<Vec<String>>
+#[serde(tag = "type")]
+enum Parameter {
+  #[serde(rename = "string")]
+  StringParam{id: String, default: Option<String>, value: Option<String>},
+  #[serde(rename = "paths")]
+  PathsParam{id: String, default: Option<Vec<String>>, value: Option<Vec<String>>},
+  #[serde(rename = "requirements")]
+  RequirementParam{id: String, default: Option<Requirement>, value: Option<Requirement>},
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Parameters {
-  #[serde(default)]
-  requirements: Requirements,
-  source: Resource,
-  destination: Resource
+struct Requirement {
+  paths: Option<Vec<String>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Job {
   job_id: u64,
-  parameters: Parameters
+  parameters: Vec<Parameter>
 }
 
-fn check_requirements(requirements: Requirements) -> Result<(), MessageError> {
-  if requirements.paths.is_some() {
-    let required_paths :Vec<String> = requirements.paths.unwrap();
-    for path in &required_paths {
-      let p = Path::new(path);
-      if !p.exists() {
-        return Err(MessageError::RequirementsError(format!("Warning: Required file does not exists: {:?}", p)));
-      }
+fn get_parameter(params: &Vec<Parameter>, key: &str) -> Option<String> {
+  for param in params.iter() {
+    match param {
+      Parameter::StringParam{id, default, value} => {
+        if id == key {
+          if let Some(ref v) = value {
+            return Some(v.clone())
+          } else {
+            return default.clone()
+          }
+        }
+      },
+      _ => {}
+    }
+  }
+  None
+}
+
+fn check_requirements(params: &Vec<Parameter>) -> Result<(), MessageError> {
+  for param in params.iter() {
+    match param {
+      Parameter::RequirementParam{id, value, ..} => {
+        if id == "requirements" {
+          if let Some(Requirement{paths: Some(paths)}) = value {
+            for ref path in paths.iter() {
+              let p = Path::new(path);
+              if !p.exists() {
+                return Err(MessageError::RequirementsError(format!("Warning: Required file does not exists: {:?}", p)));
+              }
+            }
+          }
+        }
+      },
+      _ => {}
     }
   }
   Ok(())
 }
 
 pub fn process(message: &str) -> Result<u64, MessageError> {
-
+  println!("{}", message);
   let parsed: Result<Job, _> = serde_json::from_str(message);
 
   match parsed {
     Ok(content) => {
       println!("{:?}", content);
 
-      let parameters = content.parameters;
-
-      match check_requirements(parameters.requirements) {
+      match check_requirements(&content.parameters) {
         Ok(_) => {},
         Err(message) => { return Err(message); }
       }
 
-      let url = parameters.source.path;
-      let filename = parameters.destination.path;
+      let url =
+        if let Some(source_path) = get_parameter(&content.parameters, "source_path") {
+          source_path
+        } else {
+          return Err(MessageError::RuntimeError("missing source path parameter".to_string()));
+        };
+      let filename =
+        if let Some(destination_path) = get_parameter(&content.parameters, "destination_path") {
+          destination_path
+        } else {
+          return Err(MessageError::RuntimeError("missing destination path parameter".to_string()));
+        };
 
       let client = reqwest::Client::builder()
         .build()
