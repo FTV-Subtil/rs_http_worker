@@ -102,7 +102,7 @@ pub fn process(message: &str) -> Result<u64, MessageError> {
 
       let status = response.status();
 
-      if !(status == StatusCode::Ok) {
+      if !(status == StatusCode::OK) {
         println!("ERROR {:?}", response);
         return Err(MessageError::RuntimeError("bad response status".to_string()));
       }
