@@ -4,7 +4,7 @@ version = "1.0.0"
 authors = ["Marc-Antoine Arnaud <marc.antoine@nomalab.com>"]
 
 [dependencies]
-amqp_worker = "0.1.5"
+amqp_worker = "0.1.7"
 
 reqwest = "0.9.5"
 futures = "^0.1"

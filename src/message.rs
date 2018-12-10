@@ -96,9 +96,9 @@ pub fn process(message: &str) -> Result<u64, MessageError> {
 
       let client = reqwest::Client::builder()
         .build()
-        .unwrap();
+        .map_err(|e| MessageError::RuntimeError(e.to_string()))?;
 
-      let mut response = client.get(url.as_str()).send().unwrap();
+      let mut response = client.get(url.as_str()).send().map_err(|e| MessageError::RuntimeError(e.to_string()))?;
 
       let status = response.status();
 
@@ -108,10 +108,10 @@ pub fn process(message: &str) -> Result<u64, MessageError> {
       }
 
       let mut body: Vec<u8> = vec![];
-      response.copy_to(&mut body).unwrap();
+      response.copy_to(&mut body).map_err(|e| MessageError::RuntimeError(e.to_string()))?;
 
-      let mut file = File::create(filename.as_str()).unwrap();
-      file.write_all(&body).unwrap();
+      let mut file = File::create(filename.as_str()).map_err(|e| MessageError::RuntimeError(e.to_string()))?;
+      file.write_all(&body).map_err(|e| MessageError::RuntimeError(e.to_string()))?;
 
       Ok(content.job_id)
     },
