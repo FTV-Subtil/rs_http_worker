@@ -1,9 +1,12 @@
 
 extern crate amqp_worker;
+extern crate log;
 extern crate reqwest;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
+extern crate simple_logger;
+
 use amqp_worker::*;
 
 mod message;
@@ -18,7 +21,12 @@ impl MessageEvent for HttpEvent {
   }
 }
 
+static HTTP_EVENT: HttpEvent = HttpEvent{};
+
 fn main() {
-  let http_event = HttpEvent{};
-  start_worker(&http_event);
+  simple_logger::init_with_level(log::Level::Info).unwrap();
+
+  loop{
+    start_worker(&HTTP_EVENT);
+  }
 }
