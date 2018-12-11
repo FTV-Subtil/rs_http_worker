@@ -85,33 +85,33 @@ pub fn process(message: &str) -> Result<u64, MessageError> {
         if let Some(source_path) = get_parameter(&content.parameters, "source_path") {
           source_path
         } else {
-          return Err(MessageError::RuntimeError("missing source path parameter".to_string()));
+          return Err(MessageError::ProcessingError(content.job_id, "missing source path parameter".to_string()));
         };
       let filename =
         if let Some(destination_path) = get_parameter(&content.parameters, "destination_path") {
           destination_path
         } else {
-          return Err(MessageError::RuntimeError("missing destination path parameter".to_string()));
+          return Err(MessageError::ProcessingError(content.job_id,"missing destination path parameter".to_string()));
         };
 
       let client = reqwest::Client::builder()
         .build()
-        .map_err(|e| MessageError::RuntimeError(e.to_string()))?;
+        .map_err(|e| MessageError::ProcessingError(content.job_id, e.to_string()))?;
 
-      let mut response = client.get(url.as_str()).send().map_err(|e| MessageError::RuntimeError(e.to_string()))?;
+      let mut response = client.get(url.as_str()).send().map_err(|e| MessageError::ProcessingError(content.job_id, e.to_string()))?;
 
       let status = response.status();
 
       if !(status == StatusCode::OK) {
         println!("ERROR {:?}", response);
-        return Err(MessageError::RuntimeError("bad response status".to_string()));
+        return Err(MessageError::ProcessingError(content.job_id, "bad response status".to_string()));
       }
 
       let mut body: Vec<u8> = vec![];
-      response.copy_to(&mut body).map_err(|e| MessageError::RuntimeError(e.to_string()))?;
+      response.copy_to(&mut body).map_err(|e| MessageError::ProcessingError(content.job_id, e.to_string()))?;
 
-      let mut file = File::create(filename.as_str()).map_err(|e| MessageError::RuntimeError(e.to_string()))?;
-      file.write_all(&body).map_err(|e| MessageError::RuntimeError(e.to_string()))?;
+      let mut file = File::create(filename.as_str()).map_err(|e| MessageError::ProcessingError(content.job_id, e.to_string()))?;
+      file.write_all(&body).map_err(|e| MessageError::ProcessingError(content.job_id, e.to_string()))?;
 
       Ok(content.job_id)
     },
