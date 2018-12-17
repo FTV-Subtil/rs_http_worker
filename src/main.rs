@@ -23,6 +23,8 @@ impl MessageEvent for HttpEvent {
   }
 }
 
+static HTTP_EVENT: HttpEvent = HttpEvent{};
+
 fn main() {
   if let Ok(_)= env::var("VERBOSE") {
     simple_logger::init_with_level(Level::Debug).unwrap();
@@ -30,8 +32,5 @@ fn main() {
     simple_logger::init_with_level(Level::Warn).unwrap();
   }
 
-  loop {
-    let http_event = HttpEvent{};
-    start_worker(&http_event);
-  }
+  start_worker(&HTTP_EVENT);
 }

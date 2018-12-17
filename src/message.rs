@@ -124,20 +124,57 @@ pub fn process(message: &str) -> Result<u64, MessageError> {
 
 #[test]
 fn ack_message_test() {
-  let mut file = File::open("tests/message_test_1.json").unwrap();
-  let mut msg = String::new();
-  file.read_to_string(&mut msg).unwrap();
+  let msg = r#"{
+    "parameters": [
+      {
+        "id": "requirements",
+        "type": "requirements",
+        "value": {"paths": []}
+      },
+      {
+        "id": "source_path",
+        "type": "string",
+        "value": "https://staticftv-a.akamaihd.net/sous-titres/france4/20180214/172524974-5a843dcd126f8-1518616910.ttml"
+      },
+      {
+        "id": "destination_path",
+        "type": "string",
+        "value": "/tmp/172524974-5a843dcd126f8-1518616910.ttml"
+      }
+    ],
+    "job_id":690
+  }"#;
 
-  let result = process(msg.as_str());
+  let result = process(msg);
   assert!(result.is_ok());
 }
 
 #[test]
 fn nack_message_test() {
-  let mut file = File::open("tests/message_test_2.json").unwrap();
-  let mut msg = String::new();
-  file.read_to_string(&mut msg).unwrap();
+  let msg = r#"{
+    "parameters": [
+      {
+        "id": "requirements",
+        "type": "requirements",
+        "value": {"paths": [
+          "/tmp/FiLe_ThAt_$h0uld_N0t_3xist$"
+        ]}
+      },
+      {
+        "id": "source_path",
+        "type": "string",
+        "value": "https://staticftv-a.akamaihd.net/sous-titres/france4/20180214/172524974-5a843dcd126f8-1518616910.ttml"
+      },
+      {
+        "id": "destination_path",
+        "type": "string",
+        "value": "/tmp/172524974-5a843dcd126f8-1518616910.ttml"
+      }
+    ],
+    "job_id":690
+  }"#;
 
-  let result = process(msg.as_str());
-  assert!(match result { Err(MessageError::RequirementsError(_)) => true, _ => false });
+
+  let result = process(msg);
+  assert_eq!(result, Err(MessageError::RequirementsError("Warning: Required file does not exists: \"/tmp/FiLe_ThAt_$h0uld_N0t_3xist$\"".to_string())));
 }
