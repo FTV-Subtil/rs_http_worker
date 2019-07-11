@@ -82,6 +82,11 @@ fn ack_message_test() {
         "value": "https://staticftv-a.akamaihd.net/sous-titres/france4/20180214/172524974-5a843dcd126f8-1518616910.ttml"
       },
       {
+        "id": "source_paths",
+        "type": "array_of_strings",
+        "value": ["https://staticftv-a.akamaihd.net/sous-titres/france4/20180214/172524974-5a843dcd126f8-1518616910.ttml"]
+      },
+      {
         "id": "destination_path",
         "type": "string",
         "value": "/tmp/172524974-5a843dcd126f8-1518616910.ttml"
@@ -109,6 +114,11 @@ fn nack_message_test() {
         "id": "source_path",
         "type": "string",
         "value": "https://staticftv-a.akamaihd.net/sous-titres/france4/20180214/172524974-5a843dcd126f8-1518616910.ttml"
+      },
+      {
+        "id": "source_paths",
+        "type": "array_of_strings",
+        "value": ["https://staticftv-a.akamaihd.net/sous-titres/france4/20180214/172524974-5a843dcd126f8-1518616910.ttml"]
       },
       {
         "id": "destination_path",
