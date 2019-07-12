@@ -14,19 +14,20 @@ mod message;
 struct HttpEvent {}
 
 impl MessageEvent for HttpEvent {
-    fn process(&self, message: &str) -> Result<u64, MessageError> {
-        message::process(message)
-    }
+  fn process(&self, message: &str) -> Result<u64, MessageError> {
+    message::process(message)
+  }
 }
 
 static HTTP_EVENT: HttpEvent = HttpEvent {};
 
 fn main() {
-    if env::var("VERBOSE").is_ok() {
-        simple_logger::init_with_level(Level::Debug).unwrap();
-    } else {
-        simple_logger::init_with_level(Level::Warn).unwrap();
-    }
+  println!("HTTP Worker (version {}) started ", env::var("VERSION").expect("missing softwareversion"));
+  if env::var("VERBOSE").is_ok() {
+    simple_logger::init_with_level(Level::Debug).unwrap();
+  } else {
+    simple_logger::init_with_level(Level::Warn).unwrap();
+  }
 
-    start_worker(&HTTP_EVENT);
+  start_worker(&HTTP_EVENT);
 }

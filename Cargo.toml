@@ -2,6 +2,7 @@
 name = "http_worker"
 version = "1.0.0"
 authors = ["Marc-Antoine Arnaud <marc.antoine@nomalab.com>"]
+build = "build.rs"
 
 [dependencies]
 amqp_worker = "0.5.1"
