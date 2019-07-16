@@ -1,5 +1,9 @@
 image: docker:latest
 
+cache:
+  paths:
+    - target
+
 stages:
   - build
 
