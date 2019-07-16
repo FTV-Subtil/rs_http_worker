@@ -5,7 +5,7 @@ authors = ["Marc-Antoine Arnaud <marc.antoine@nomalab.com>"]
 build = "build.rs"
 
 [dependencies]
-amqp_worker = "0.5.1"
+amqp_worker = "0.5.2"
 log = "0.4.5"
 reqwest = "0.9.5"
 serde = "^1.0"
