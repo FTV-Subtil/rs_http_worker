@@ -14,7 +14,7 @@ mod message;
 struct HttpEvent {}
 
 impl MessageEvent for HttpEvent {
-  fn process(&self, message: &str) -> Result<u64, MessageError> {
+  fn process(&self, message: &str) -> Result<job::JobResult, MessageError> {
     message::process(message)
   }
 }
