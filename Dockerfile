@@ -2,9 +2,9 @@ FROM rust:1.36-stretch as builder
 
 ADD . ./
 
-RUN apt update && \
-    apt install -y libssl-dev && \
-    cargo build --verbose --release && \
+RUN apt-get update && \
+    apt-get install -y libssl-dev && \
+    cargo build -j1 --verbose --release && \
     cargo install
 
 FROM debian:stretch
