@@ -6,6 +6,6 @@ authors = ["Marc-Antoine Arnaud <marc.antoine@nomalab.com>"]
 
 [dependencies]
 amqp_worker = "0.5.4"
-log = "0.4.5"
+log = "0.4.8"
 reqwest = "0.9.5"
 simple_logger = "1.0.1"
